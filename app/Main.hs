@@ -1,6 +1,6 @@
+{-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE GADTs #-}
-{-# LANGUAGE DeriveDataTypeable #-}
 
 module Main where
 
@@ -51,11 +51,8 @@ data CommandOpts = Opts
 options :: CommandOpts
 options = Opts {url = "http://localhost:3000" &= help "Url to use" &= opt "http://localhost:3000", loc = "Heimdal" &= help "Location to lookup" &= opt "Heimdal"} &= summary "Display weather from Wictk"
 
-firstNowcast :: [Nowcast] -> Nowcast
-firstNowcast = Prelude.head
-
-printTemp :: Nowcast -> IO ()
-printTemp (Nowcast simpleEntry) = print $ temperature simpleEntry
+displayNowcast :: Nowcast -> IO ()
+displayNowcast (Nowcast simpleEntry) = print $ "Temperature " ++ show (temperature simpleEntry) ++ " °C"
 
 main :: IO ()
 main = do
@@ -70,5 +67,5 @@ main = do
   let res = responseBody response
   let nowcastsDecoded = decode res :: Maybe [Nowcast]
   case nowcastsDecoded of
-    Just nowcasts -> printTemp $ firstNowcast nowcasts
+    Just nowcasts -> displayNowcast $ Prelude.head nowcasts
     Nothing -> print "Failed to decode response"
